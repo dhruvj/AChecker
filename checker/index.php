@@ -19,6 +19,7 @@ include_once(AC_INCLUDE_PATH. 'classes/DAO/GuidelinesDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/DAO/ChecksDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/DAO/UserLinksDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/Decision.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/Crawler.class.php');
 
 global $starttime;
 $mtime = microtime(); 

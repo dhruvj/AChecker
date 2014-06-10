@@ -122,6 +122,10 @@ define('DEFAULT_WEB_SERVICE_OUTPUT', 'html');
 // default guideline to validate against
 define('DEFAULT_GUIDELINE', 8);
 
+// default numbers in form like number of guidelines per row
+define('DEFAULT_GUIDELINES_PER_ROW', 3);
+define('DEFAULT_DISPLAYED_DEPTH', 3);
+
 // report formats
 define('REPORT_FORMAT_GUIDELINE', 1);
 define('REPORT_FORMAT_LINE', 2);

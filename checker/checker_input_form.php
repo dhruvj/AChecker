@@ -16,7 +16,8 @@ if (!defined("AC_INCLUDE_PATH")) die("Error: AC_INCLUDE_PATH is not defined in c
 global $_current_user, $decision_error;
 
 $default_uri_value = "";
-$num_of_guidelines_per_row = 3;  // default number of guidelines to display in a row on the page
+$num_of_guidelines_per_row = DEFAULT_GUIDELINES_PER_ROW;  // default number of guidelines to display in a row on the page
+$number_of_displayed_depth = DEFAULT_DISPLAYED_DEPTH;  // possible depth values excluding 'all'
 
 if (!isset($_POST["checkbox_gid"])) $_POST["checkbox_gid"] = array(DEFAULT_GUIDELINE);
 if (!isset($_POST["radio_gid"])) $_POST["radio_gid"] = array(DEFAULT_GUIDELINE);
@@ -27,6 +28,7 @@ $open_guidelines = $guidelinesDAO->getOpenGuidelines();
 
 $savant->assign('default_uri_value', $default_uri_value);
 $savant->assign('num_of_guidelines_per_row', $num_of_guidelines_per_row);
+$savant->assign('number_of_displayed_depth', $number_of_displayed_depth);
 
 if (isset($_current_user))
 {

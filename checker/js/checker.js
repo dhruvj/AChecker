@@ -112,6 +112,17 @@ AChecker.output = AChecker.output || {};
      * @param divId: the id of the selected input div
      */
     AChecker.input.onClickTab = function (divId) {
+        if(divId == "AC_by_uri") {
+            $('#depth_of_review').attr('disabled', false);
+            $('#total_number_of_links').attr('disabled', false);
+            $('#maximum_links_per_level').attr('disabled', false);
+            $('#maximum_links_per_page').attr('disabled', false);
+        } else {
+            $('#depth_of_review').attr('disabled', 'disabled');
+            $('#total_number_of_links').attr('disabled', 'disabled');
+            $('#maximum_links_per_level').attr('disabled', 'disabled');
+            $('#maximum_links_per_page').attr('disabled', 'disabled');
+        }
         // check if the div is disabled
         if (!$('#' + inputDivMapping[divId].menuID).hasClass(disableClass)) {
             AChecker.showDivOutof(divId, inputDivMapping);
