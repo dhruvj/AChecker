@@ -242,6 +242,40 @@ echo get_guideline_div($this->rows, $this->num_of_guidelines_per_row, "checkbox"
 				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_GUIDELINE; ?>" id="option_rpt_gdl" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) echo 'checked="checked"'; ?> /><label for="option_rpt_gdl"><?php echo _AC("view_by_guideline"); ?></label></td>
 				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_LINE; ?>" id="option_rpt_line" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) echo 'checked="checked"'; ?> /><label for="option_rpt_line"><?php echo _AC("view_by_line"); ?></label></td>
 			</tr>
+            <tr>
+				<td colspan="3"><h3><?php echo _AC("advanced_options"); ?></h3></td>
+			</tr>
+			<tr>
+				<td class="one_third_width">
+                    <label for="depth_of_review"> <?php echo _AC("depth_of_review"); ?>: </label>
+                    <select name="depth_of_review" id="depth_of_review">
+                        <?php 
+                            for($count = 0; $count <= $this->number_of_displayed_depth; ++$count) {
+                                if($count == 0) {
+                                    echo "<option value = 'homepage' ".(($_POST["depth_of_review"] == "homepage") ? 'selected': '' )." >"._AC("homepage")."</option>";
+                                } else {
+                                    echo "<option value = '".$count."' ".(($_POST["depth_of_review"] == $count) ? 'selected': '' ).">".$count."</option>";
+                                }
+                            }
+                        ?>
+                        <option value='all' <?php echo (($_POST["depth_of_review"] == "all") ? 'selected': '' ) ?> > all </option>
+                    </select>
+                </td>
+				<td class="one_third_width">
+                    <label for="total_number_of_links"><?php echo _AC("total_number_of_links"); ?>: </label>
+                    <input type="number" name="total_number_of_links" id = "total_number_of_links" min = "0" value = "<?php if(isset($_POST["total_number_of_links"])) echo $_POST("total_number_of_links"); else echo "0"; ?>">
+                </td>
+                <td class="one_third_width">
+                    <label for="maximum_links_per_level"><?php echo _AC("maximum_links_per_level"); ?>: </label>
+                    <input type="number" name="maximum_links_per_level" id ="maximum_links_per_level" min = "0" value = "<?php if(isset($_POST["maximum_links_per_level"])) echo $_POST("maximum_links_per_level"); else echo "0"; ?>">
+                </td>
+            </tr>
+            <tr>
+                <td class="one_third_width">
+                    <label for="maximum_links_per_page"><?php echo _AC("maximum_links_per_page"); ?>: </label>
+                    <input type="number" name="maximum_links_per_page" id ="maximum_links_per_page" min = "0" value = "<?php if(isset($_POST["maximum_links_per_page"])) echo $_POST("maximum_links_per_page"); else echo "0"; ?>">
+                </td>
+			</tr>
 		</table>
 		</div>
 	</fieldset>
