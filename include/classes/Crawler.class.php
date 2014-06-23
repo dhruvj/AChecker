@@ -33,6 +33,7 @@ class Crawler {
     var $linksPerPage;  // Links to be considered per page
     var $domainName;    // Domain of base url
     var $visited = array();    // Visited URLs, don't visit again!
+    var $countLinks;
 
     /**
      * Constructor to initialize the crawling process
@@ -44,11 +45,17 @@ class Crawler {
      */
 
     function Crawler($URL, $levelOfReview, $totalLinks, $linksPerLevel, $linksPerPage) {
-        $this->baseURL = $URL;
+        $extractedURL = parse_url($URL);
+        $base = $extractedURL['host'];
+        // add www if not present
+        if (strpos($base, "www.") !== 0) {
+            $base = "www." . $base;
+        }
+        $URL = $extractedURL['scheme'] . "://" . $base . $extractedURL['path'] . ($extractedURL['query'] != '' ? ("?" . $extractedURL['query']) : "");
+        $URL = rtrim($URL, "?");
+        $this->baseURL = rtrim($URL, "/");
         $this->levelOfReview = $levelOfReview;
-        if ($this->levelOfReview == "homepage") {
-            $this->levelOfReview = -1;
-        } else if ($this->levelOfReview == "all") {
+        if ($this->levelOfReview == "all") {
             $this->levelOfReview = 0;
         }
         $this->totalLinks = $totalLinks;
@@ -72,41 +79,22 @@ class Crawler {
         return $data;
     }
     /**
-     * Check if URL exists or not
+     * Check if the content type returned by URL is text/html and Check if URL http code is 200 or not
      * @param string $URL
      * @return boolean
      */
-    function urlExists($URL) {
+    function isURLOk($URL) {
         $ch = curl_init($URL);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        $content = curl_exec($ch);
-        $type = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        //curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_exec($ch);
+        $ContentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $HTTPCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        if($type == "200") return true;
+        if(strpos($ContentType, "text/html") !== false && $HTTPCode == "200") return true;
         else return false;
     }
-
-    /**
-     * Check if the content type returned by URL is text/html
-     * @param string $URL
-     * @return boolean
-     */
-    function isContentTypeHTML($URL) {
-        $ch = curl_init($URL);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        $content = curl_exec($ch);
-        $type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
-        if(strpos($type, "text/html") !== false) return true;
-        else return false;
-    }
-
     /**
      * convert relative url to absolute
      * @param string $rel
@@ -178,16 +166,14 @@ class Crawler {
             $nextURL = $element->href;
             if ($this->isRelativeURL($nextURL) === true) {   // if it is a relative url then it will be from same domain
                 $nextURL = $this->relativeToAbsoluteURL($nextURL, $URL);
-                if($this->isContentTypeHTML($nextURL) === false) {
+                $nextURL = rtrim($nextURL, "?");
+                $nextURL = rtrim($nextURL, "/");
+                if($this->isURLOk($nextURL) === false) {
                     continue;
-                } 
-                if (in_array($nextURL, $this->visited) === false) {
-                    if ($this->urlExists($nextURL) !== false) {
-                        if (in_array($nextURL, $this->visited) === false) {    //don't add same URL again
-                            array_push($validuri, $nextURL);
-                            array_push($this->visited, $nextURL);
-                        }
-                    }
+                }
+                if (in_array($nextURL, $this->visited) === false) {    //don't add same URL again
+                    array_push($validuri, $nextURL);
+                    array_push($this->visited, $nextURL);
                 }
             } else {
                 $extractedNextURL = parse_url($nextURL);
@@ -196,22 +182,22 @@ class Crawler {
                     $baseNextURL = "www." . $baseNextURL;
                 }
                 $nextURL = $extractedNextURL['scheme'] . "://" . $baseNextURL . $extractedNextURL['path'] . ($extractedNextURL['query'] != '' ? ("?" . $extractedNextURL['query']) : "");
-                if($this->isContentTypeHTML($nextURL) === false) {
+                $nextURL = rtrim($nextURL, "?");
+                $nextURL = rtrim($nextURL, "/");
+                if($this->isURLOk($nextURL) === false) {
                     continue;
                 }
                 if (strcmp($base, $baseNextURL) == 0) {  //check if it belongs to same domain
-                    if (in_array($nextURL, $this->visited) === false) {
-                        if ($this->urlExists($nextURL) !== false) {
-                            if (in_array($nextURL, $this->visited) === false) {    //don't add same URL again
-                                array_push($validuri, $nextURL);
-                                array_push($this->visited, $nextURL);
-                            }
-                        }
+                    if (in_array($nextURL, $this->visited) === false) {    //don't add same URL again
+                        array_push($validuri, $nextURL);
+                        array_push($this->visited, $nextURL);
                     }
                 }
             }
             // limit number of url by $this->linksPerPage And don't break when 0(infinity)
             if ((count($validuri) >= $this->linksPerPage) && ($this->linksPerPage != 0))
+                break;
+            if (($this->countLinks+count($validuri)) >= $this->totalLinks && $this->totalLinks != 0)
                 break;
         }
         return $validuri;
@@ -222,25 +208,30 @@ class Crawler {
      */
     function initiate() {
         $result = array();
-        $countLinks = 1;    //keep counting of links found, 1 for baseurl
+        $this->countLinks = 1;    //keep counting of links found, 1 for baseurl
+        $idTracker = 0;
         $q = new SplQueue();
-        $q->enqueue(array("level" => 0, "url" => $this->baseURL));
+        $q->enqueue(array("level" => 0, "url" => $this->baseURL, "id" => $idTracker, "belongsTo" => NULL));
         array_push($this->visited, $this->baseURL);    // Mark the base URL visited
         while (!$q->isEmpty()) {
             $node = $q->dequeue();
-            $result[$node[level]][] = $node[url];
-            $nextLevel = ($node[level] + 1);    // next level
+            $result[$node["level"]][] = array($node["url"], $node["id"], $node["belongsTo"]);
+            $nextLevel = ($node["level"] + 1);    // next level
             //limit the level of review by $this->levelOfReview except 0(infinity)
-            if (($this->levelOfReview >= $nextLevel || ($this->levelOfReview == 0)) && ($this->totalLinks > $countLinks || $this->totalLinks == 0)) {
-                $nextURLs = $this->getAllValidLinks($node[url]);
+            if (($this->levelOfReview >= $nextLevel || ($this->levelOfReview == 0)) && ($this->totalLinks > $this->countLinks || $this->totalLinks == 0)) {
+                $nextURLs = $this->getAllValidLinks($node["url"]);
+                $count = 0;
                 foreach ($nextURLs as $url) {
-                    $q->enqueue(array("level" => $nextLevel, "url" => $url));
-                    ++$countLinks;
-                    if ($countLinks >= $this->totalLinks && $this->totalLinks != 0)
+                    ++$idTracker;
+                    $q->enqueue(array("level" => $nextLevel, "url" => $url, "id" => $idTracker, "belongsTo" => $node["id"]));
+                    ++$count;
+                    ++$this->countLinks;
+                    if(count($result[$nextLevel]) + $count >= $this->linksPerLevel && $this->linksPerLevel != 0) break;
+                    if ($this->countLinks >= $this->totalLinks && $this->totalLinks != 0)
                         break;
                 }
             }
         }
+        return $result;
     }
-
 }
