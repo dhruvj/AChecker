@@ -256,10 +256,10 @@ $has_errors = false;  // A flag detecting if there's any error occurred
 if ($msg->containsErrors()) {
 	$has_errors = true;
 }
-
-// display initial validation form: input URI or upload a html file 
-include ("checker_input_form.php");
-
+if($_POST["byCrawler"] != '1') {
+    // display initial validation form: input URI or upload a html file 
+    include ("checker_input_form.php");
+}
 // display validation results
 if(isset($graph) && !$has_errors) {
     include ("crawler_results.php");

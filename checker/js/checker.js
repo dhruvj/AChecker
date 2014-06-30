@@ -51,6 +51,12 @@ AChecker.output = AChecker.output || {};
         },
         "AC_css_validation_result": {
             menuID: "AC_menu_css_validation_result"
+        },
+        "AC_overview": {
+            menuID: "AC_menu_overview"
+        },
+        "AC_report": {
+            menuID: "AC_menu_report"
         }
     };
 
