@@ -33,9 +33,9 @@ unset($_SESSION['input_form']);
 $guidelinesDAO = new GuidelinesDAO();
 
 // process to make decision
-if (isset($_POST['make_decision']) || isset($_POST['reverse']))
+if (isset($_REQUEST['make_decision']) || isset($_REQUEST['reverse']))
 {
-	$decision = new Decision($_SESSION['user_id'], $_POST['uri'], $_POST['output'], $_POST['jsessionid']);
+	$decision = new Decision($_SESSION['user_id'], $_REQUEST['uri'], $_REQUEST['output'], $_REQUEST['jsessionid']);
 	
 	if ($decision->hasError())
 	{
@@ -44,12 +44,12 @@ if (isset($_POST['make_decision']) || isset($_POST['reverse']))
 	else
 	{
 		// make decsions
-		if (isset($_POST['make_decision'])) $decision->makeDecisions($_POST['d']);
+		if (isset($_REQUEST['make_decision'])) $decision->makeDecisions($_REQUEST['d']);
 		
 		// reverse decision
-		if (isset($_POST['reverse'])) 
+		if (isset($_REQUEST['reverse'])) 
 		{
-			foreach ($_POST['reverse'] as $sequenceID => $garbage)
+			foreach ($_REQUEST['reverse'] as $sequenceID => $garbage)
 				$decision->makeDecisions(array($sequenceID=>AC_NO_DECISION));
 		}
 	}
@@ -93,8 +93,8 @@ if ($_GET['uri'] == 'referer')
 	
 	if (!$msg->containsErrors())
 	{
-		$_POST['validate_uri'] = 1;
-		$_POST['uri'] = $_SERVER['HTTP_REFERER'];
+		$_REQUEST['validate_uri'] = 1;
+		$_REQUEST['uri'] = $_SERVER['HTTP_REFERER'];
 		$_gids = array($grow[0]['guideline_id']);
 	}
 }
@@ -103,43 +103,43 @@ if ($_GET['uri'] == 'referer')
 $error_happen = false;
 
 // CSS Validation
-if (isset($_POST["enable_css_validation"])) {
+if (isset($_REQUEST["enable_css_validation"])) {
 	include(AC_INCLUDE_PATH. "classes/CSSValidator.class.php");
 	$_SESSION['input_form']['enable_css_validation'] = true;
 }
 
 // validate html
-if (isset($_POST["enable_html_validation"])) {
+if (isset($_REQUEST["enable_html_validation"])) {
 	include(AC_INCLUDE_PATH. "classes/HTMLValidator.class.php");
 	$_SESSION['input_form']['enable_html_validation'] = true;
 }
 
 if (!is_array($_gids)) { // $_gids hasn't been set at validating referer URIs
-	if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
-		$_gids = $_POST["radio_gid"];
-	} else if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) {
-		$_gids = $_POST["checkbox_gid"];
+	if ($_REQUEST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
+		$_gids = $_REQUEST["radio_gid"];
+	} else if ($_REQUEST["rpt_format"] == REPORT_FORMAT_LINE) {
+		$_gids = $_REQUEST["checkbox_gid"];
 	} else {
-		$_gids = $_POST["gid"];
+		$_gids = $_REQUEST["gid"];
 	}
 	$_SESSION['input_form']['gids'] = $_gids;
 }
 // variable to check if we have to enable crawler or not
 $enableCralwer = 0;
-if ($_POST['depth_of_review'] != "homepage" && isset($_POST["validate_uri"])) {
+if ($_REQUEST['depth_of_review'] != "homepage" && isset($_REQUEST["validate_uri"])) {
     $enableCralwer = 1;
 }
-if ($_POST["validate_uri"])
+if ($_REQUEST["validate_uri"])
 {
-	$_POST['uri'] = htmlentities($_POST['uri']);
+	$_REQUEST['uri'] = htmlentities($_REQUEST['uri']);
 	
-	$uri = Utility::getValidURI($addslashes($_POST["uri"]));
+	$uri = Utility::getValidURI($addslashes($_REQUEST["uri"]));
 	$_SESSION['input_form']['uri'] = $uri;
 	
 	// Check if the given URI is connectable
 	if ($uri === false)
 	{
-		$msg->addError(array('CANNOT_CONNECT', $_POST['uri']));
+		$msg->addError(array('CANNOT_CONNECT', $_REQUEST['uri']));
 	}
 	
 	// don't accept localhost URI
@@ -150,52 +150,52 @@ if ($_POST["validate_uri"])
 	
 	if (!$msg->containsErrors())
 	{
-		$_POST['uri'] = $_REQUEST['uri'] = $uri;
+		$_REQUEST['uri'] = $_REQUEST['uri'] = $uri;
         if(!$enableCralwer) {  // Don't get any url, we will perform crawling later if $enableCrawler is set
             $validate_content = @file_get_contents($uri);
 
-            if (isset($_POST["enable_html_validation"]))
+            if (isset($_REQUEST["enable_html_validation"]))
                 $htmlValidator = new HTMLValidator("uri", $uri);
 
             //CSS Validator
-            if (isset($_POST["enable_css_validation"]))
+            if (isset($_REQUEST["enable_css_validation"]))
                 $cssValidator = new CSSValidator("uri", $uri);	
 
-            if (isset($_POST["show_source"]))
+            if (isset($_REQUEST["show_source"]))
                 $source_array = file($uri);
         }
 	}
 }
 
-if ($_POST["validate_file"])
+if ($_REQUEST["validate_file"])
 {
 	$validate_content = file_get_contents($_FILES['uploadfile']['tmp_name']);
 	$_SESSION['input_form']['file'] = $validate_content;
 
-	if (isset($_POST["enable_html_validation"]))
+	if (isset($_REQUEST["enable_html_validation"]))
 		$htmlValidator = new HTMLValidator("fragment", $validate_content);
 
-	if (isset($_POST["show_source"]))
+	if (isset($_REQUEST["show_source"]))
 		$source_array = file($_FILES['uploadfile']['tmp_name']);
 }
 
-if ($_POST["validate_paste"])
+if ($_REQUEST["validate_paste"])
 {
-	$validate_content = $_POST["pastehtml"] = $stripslashes($_POST["pastehtml"]);
+	$validate_content = $_REQUEST["pastehtml"] = $stripslashes($_REQUEST["pastehtml"]);
 	$_SESSION['input_form']['paste'] = $validate_content;
 	
-	if (isset($_POST["enable_html_validation"]))
+	if (isset($_REQUEST["enable_html_validation"]))
 		$htmlValidator = new HTMLValidator("fragment", $validate_content);
 
-	if (isset($_POST["show_source"]))
+	if (isset($_REQUEST["show_source"]))
 		$source_array = preg_split("/(?:\r\n?|\n)/", $validate_content);
 }
 
-if ($_POST["validate_content"] && $_POST["validate_content"] <> '')
+if ($_REQUEST["validate_content"] && $_REQUEST["validate_content"] <> '')
 {
-	$validate_content = $_POST["validate_content"];
-	if (isset($_POST["show_source"]))
-		$source_array = explode("\n", $_POST["validate_content"]);
+	$validate_content = $_REQUEST["validate_content"];
+	if (isset($_REQUEST["show_source"]))
+		$source_array = explode("\n", $_REQUEST["validate_content"]);
 }
 // end of validating html
 
@@ -211,12 +211,12 @@ if (isset($validate_content) && !Utility::hasEnoughMemory(strlen($validate_conte
 $show_achecker_whatis = false;
 
 // validation and display result
-if ($_POST["validate_file"] || $_POST["validate_content"] || $_POST["validate_paste"] || ($_POST["validate_uri"] && !$enableCralwer))
+if ($_REQUEST["validate_file"] || $_REQUEST["validate_content"] || $_REQUEST["validate_paste"] || ($_REQUEST["validate_uri"] && !$enableCralwer))
 {
 	// check accessibility
 	include_once(AC_INCLUDE_PATH. "classes/AccessibilityValidator.class.php");
 	
-	if ($_POST["validate_uri"]) $check_uri = $_POST['uri'];
+	if ($_REQUEST["validate_uri"]) $check_uri = $_REQUEST['uri'];
 	
 	if (isset($validate_content) && $has_enough_memory)
 	{
@@ -225,24 +225,24 @@ if ($_POST["validate_file"] || $_POST["validate_content"] || $_POST["validate_pa
 	}
 	// end of checking accessibility
 } else if($enableCralwer) {
-    if(!is_numeric($_POST["total_number_of_links"])) {
+    if(!is_numeric($_REQUEST["total_number_of_links"])) {
         $msg->addError("TOTAL_NUMBER_OF_LINKS_INVALID");
     }
-    if(!is_numeric($_POST["maximum_links_per_level"])) {
+    if(!is_numeric($_REQUEST["maximum_links_per_level"])) {
         $msg->addError("MAXIMUM_LINKS_PER_LEVEL_INVALID");
     }
-    if(!is_numeric($_POST["maximum_links_per_page"])) {
+    if(!is_numeric($_REQUEST["maximum_links_per_page"])) {
         $msg->addError("MAXIMUM_LINKS_PER_PAGE_INVALID");
     }
-    if(!(is_numeric($_POST["depth_of_review"]) || $_POST["depth_of_review"] == "all" ||  $_POST["depth_of_review"] == "homepage" )) {
+    if(!(is_numeric($_REQUEST["depth_of_review"]) || $_REQUEST["depth_of_review"] == "all" ||  $_REQUEST["depth_of_review"] == "homepage" )) {
         $msg->addError("MAXIMUM_LINKS_PER_PAGE_INVALID");
     }
     if(!$msg->containsErrors()) {
-        $crawler = new Crawler( $_POST['uri'], 
-                                $_POST['depth_of_review'], 
-                                $_POST['total_number_of_links'], 
-                                $_POST['maximum_links_per_level'], 
-                                $_POST['maximum_links_per_page']
+        $crawler = new Crawler( $_REQUEST['uri'], 
+                                $_REQUEST['depth_of_review'], 
+                                $_REQUEST['total_number_of_links'], 
+                                $_REQUEST['maximum_links_per_level'], 
+                                $_REQUEST['maximum_links_per_page']
                               );
         $graph = $crawler->initiate();
     }
@@ -256,10 +256,8 @@ $has_errors = false;  // A flag detecting if there's any error occurred
 if ($msg->containsErrors()) {
 	$has_errors = true;
 }
-if($_POST["byCrawler"] != '1') {
-    // display initial validation form: input URI or upload a html file 
-    include ("checker_input_form.php");
-}
+// display initial validation form: input URI or upload a html file 
+include ("checker_input_form.php");
 // display validation results
 if(isset($graph) && !$has_errors) {
     include ("crawler_results.php");

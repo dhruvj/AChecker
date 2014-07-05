@@ -54,7 +54,6 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
         });
     });
 </script>
-    
 <div id="output_div" >
     <div class="center-input-form">
         <a name="report" title="<?php echo _AC("report_start"); ?>"></a>
@@ -69,18 +68,10 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
     </div>
             <br>
     <div id ="AC_overview">
-   
-
-          
-                <ul id="graph" style="display:none">
-
-                </ul>
-            
-
+        <ul id="graph" style="display:none">
+        </ul>
     </div>
-    <div id ="AC_report">
-        
-          
+    <div id ="AC_report" style = "display:none"> 
 <table>
     <tr>
         <th> URL </th>
@@ -88,21 +79,29 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
     </tr>
         <?php
         $count = 0;
+        $getQuery = "?";
+        foreach($_REQUEST as $request => $value) {
+            if($request == "depth_of_review") continue;
+            if(is_array($value)) {
+                foreach ($value as $get) {
+                    $getQuery .= $request."[]="."$get&";
+                }
+                continue;
+            }
+            $getQuery .= $request."=".$value."&";
+        }
+        $getQuery .= "byCrawler=1&depth_of_review=homepage";
 foreach ($this->graph as $level) {
     echo "<tr><td colspan='2'> Level-".$count++."</tr>";
     
     foreach ($level as $urlinfo) {
         echo "<tr>";
-        echo "<td>".$urlinfo[0]."</td>"."<td>"."<form target='_blank' method='post' id = 'form_".$count."' action = '".AC_BASE_HREF."checker/index.php'><input type='hidden' name='byCrawler' value='1'></form> <a href='javascript:void(0);' onclick=\"javascript:document.getElementById('form_".($count++)."').submit()\"> Report </a>"."</td>";
+        echo "<td>".$urlinfo[0]."</td>"."<td>"."<a href = 'javascript:void(0);' onclick = \"AChecker.popup('".AC_BASE_HREF."checker/index.php".$getQuery."')\"> Report </a> "."</td>";
         echo "<tr>";
     }
 }
-?>
-               
-         
+?>       
 </table>
-   
-
     </div>
         </fieldset>
     <div class="center">

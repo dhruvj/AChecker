@@ -102,7 +102,7 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 <table style="width:100%">
 <tr>
 <td>
-<div class="center-input-form">
+<div class="center-input-form" <?php if($_REQUEST['byCrawler'] == "1") echo "style = 'display:none'" ?> >
 <form name="input_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
 
 	<div class="left-col" style="float:left;clear:left;"><br />
