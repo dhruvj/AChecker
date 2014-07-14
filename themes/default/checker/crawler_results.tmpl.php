@@ -32,6 +32,28 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
 <script src="<?php echo AC_BASE_HREF . "/jscripts/lib/jquery.jOrgChart.js" ?>" type="text/javascript"></script>
 <link rel="stylesheet" href="<?php echo AC_BASE_HREF ?>themes/default/jquery.jOrgChart.css"/>
 <script language="javascript" type="text/javascript"> 
+    
+    function getUrlOfSelectedBoxes() {
+        var url = "<?php echo AC_BASE_HREF."checker/general_report.php?"; ?>";
+        var values = $('input[name="urls[]"]:checked').map(function() {
+            return this.value;
+        }).get();
+        for(var urlcount = 0; urlcount < values.length; ++urlcount) {
+            url += "urls[]="+values[urlcount]+"&";
+        }
+        //Now append gids
+        var gids = "<?php 
+            $gids = "";
+            if($_REQUEST['rpt_format'] == REPORT_FORMAT_LINE) $request = $_REQUEST['checkbox_gid'];
+            else if($_REQUEST['rpt_format'] == REPORT_FORMAT_GUIDELINE) $request = $_REQUEST['radio_gid'];
+            foreach($request as $gid) {
+                $gids .= "gid[]=".$gid."&";
+            }
+            echo $gids;
+        ?>";
+        return url+gids;
+    }
+    
     function createNode(url, id) {
         var li = document.createElement("li");
         var ul = document.createElement("ul");
@@ -64,6 +86,7 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
 
             <li class="navigation"><a href="javascript:void(0);" accesskey="2" title="<?php echo _AC("menu_report"); ?> Alt+2" id="AC_menu_report" onclick="AChecker.output.onClickTab('AC_report');"><span class="nav"><?php echo _AC("menu_report"); ?></span></a></li>
 
+            <li class="navigation"><a href="javascript:void(0);" accesskey="2" title="<?php echo _AC("menu_general_report"); ?> Alt+3" id="AC_menu_general_report" onclick="AChecker.output.onClickTab('AC_general_report');"><span class="nav"><?php echo _AC("menu_general_report"); ?></span></a></li>
         </ul>
     </div>
             <br>
@@ -74,8 +97,8 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
     <div id ="AC_report" style = "display:none"> 
 <table>
     <tr>
-        <th> URL </th>
-        <th> Report </th>
+        <th> <?php echo _AC("AC_URL") ?> </th>
+        <th> <?php echo _AC("AC_REPORT") ?> </th>
     </tr>
         <?php
         $count = 0;
@@ -92,7 +115,7 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
         }
         $getQuery .= "byCrawler=1&depth_of_review=homepage";
 foreach ($this->graph as $level) {
-    echo "<tr><td colspan='2'> Level-".$count++."</tr>";
+    echo "<tr><th colspan='2'> Level-".$count++."</th></tr>";
     
     foreach ($level as $urlinfo) {
         echo "<tr>";
@@ -103,6 +126,18 @@ foreach ($this->graph as $level) {
 ?>       
 </table>
     </div>
+            <div id ="AC_general_report"  style = "display:none">
+                <?php echo _AC("achecker_general_report_select"); // select url for general report and it's only available for guidelines ?><br><br>
+                <?php 
+                    foreach($this->graph as $level) {
+                        foreach($level as $urlinfo) {
+                            echo "<input type='checkbox' name='urls[]' value='".$urlinfo[0]."'> ".$urlinfo[0]."<br>";
+                        }
+                    }
+                ?>
+                <br>
+                <a href ="javascript:void(0)" onclick="AChecker.popup(getUrlOfSelectedBoxes())"><?php echo _AC("AC_generate_general_report"); ?></a>
+            </div>
         </fieldset>
     <div class="center">
 		
