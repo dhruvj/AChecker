@@ -62,10 +62,10 @@ if (isset($this->aValidator) && $this->a_rpt->getAllowSetDecisions() == 'true')
 	
 	echo '<form method="post" action="'.$_SERVER['PHP_SELF'].'">'."\n\r";
 	echo '<input type="hidden" name="jsessionid" value="'.$sessionID.'" />'."\n\r";
-	echo '<input type="hidden" name="uri" value="'.$addslashes($_POST["uri"]).'" />'."\n\r";
+	echo '<input type="hidden" name="uri" value="'.$addslashes($_REQUEST["uri"]).'" />'."\n\r";
 	echo '<input type="hidden" name="output" value="html" />'."\n\r";
 	echo '<input type="hidden" name="validate_uri" value="1" />'."\n\r";
-	echo '<input type="hidden" name="rpt_format" value="'.$addslashes($_POST['rpt_format']).'" />'."\n\r";
+	echo '<input type="hidden" name="rpt_format" value="'.$addslashes($_REQUEST['rpt_format']).'" />'."\n\r";
 
 	// report for referer URI
 	if (isset($this->referer_report))
@@ -79,9 +79,9 @@ if (isset($this->aValidator) && $this->a_rpt->getAllowSetDecisions() == 'true')
 		echo '<input type="hidden" name="referer_user_link_id" value="'.$this->referer_user_link_id.'" />'."\n\r";
 	} 
 	
-	foreach ($_POST as $post_name => $value) {
+	foreach ($_REQUEST as $post_name => $value) {
 		if (substr($post_name, -4) == "_gid") {
-			foreach ($_POST[$post_name] as $gid_value) {
+			foreach ($_REQUEST[$post_name] as $gid_value) {
 				echo '<input type="hidden" name="'.$post_name.'[]" value="'.$gid_value.'" />'."\n\r";
 			}
 		}
@@ -137,7 +137,7 @@ if (isset($this->aValidator) && $this->a_rpt->getAllowSetDecisions() == 'true')
 
 			<li class="navigation"><a href="javascript:void(0);" accesskey="3" title="<?php echo _AC("potential_problems"); ?> Alt+3" id="AC_menu_potential_problems" onclick="AChecker.output.onClickTab('AC_potential_problems');"><span class="nav"><?php echo _AC("potential_problems"); ?> (<span id="AC_num_of_potential"><?php echo $this->num_of_potential_problems_no_decision; ?></span>)</span></a></li>
 
-			<li class="navigation"><a href="javascript:void(0);" accesskey="4" title="<?php echo _AC("html_validation_result"); ?> Alt+4" id="AC_menu_html_validation_result" onclick="AChecker.output.onClickTab('AC_html_validation_result');"><span class="nav"><?php echo _AC("html_validation_result"); ?> <?php if (isset($_POST["enable_html_validation"])) echo '(<span id="AC_num_of_html_errors">'.$this->num_of_html_errors."</span>)"; ?></span></a></li>
+			<li class="navigation"><a href="javascript:void(0);" accesskey="4" title="<?php echo _AC("html_validation_result"); ?> Alt+4" id="AC_menu_html_validation_result" onclick="AChecker.output.onClickTab('AC_html_validation_result');"><span class="nav"><?php echo _AC("html_validation_result"); ?> <?php if (isset($_REQUEST["enable_html_validation"])) echo '(<span id="AC_num_of_html_errors">'.$this->num_of_html_errors."</span>)"; ?></span></a></li>
 
 			<li class="navigation"><a href="javascript:void(0);" accesskey="5" title="<?php echo _AC("css_validation_result"); ?> Alt+5" id="AC_menu_css_validation_result" onclick="AChecker.output.onClickTab('AC_css_validation_result');"><span class="nav"><?php echo _AC("css_validation_result"); ?> <?php if (isset($this->cssValidator)) echo '(<span id="AC_num_of_css_errors">'.$this->num_of_css_errors."</span>)"; ?></span></a></li>
 		</ul>
@@ -234,7 +234,7 @@ else
 	
 		<div id="AC_css_validation_result" style="margin-top:1em; display:none;">
 <?php
-if (isset($_POST['validate_file']) || isset($_POST['validate_paste'])) {
+if (isset($_REQUEST['validate_file']) || isset($_REQUEST['validate_paste'])) {
 	// css validator is only available at validating url, not at validating a uploaded file or pasted html
 	echo '<br /><span class="info_msg"><img src="'.AC_BASE_HREF.'images/info.png" width="15" height="15" alt="'._AC("info").'"/>  '._AC("css_validator_unavailable").'</span>';
 } else if (isset($this->cssValidator)) {
@@ -270,7 +270,7 @@ if (isset($this->aValidator) && $this->a_rpt->getAllowSetDecisions() == 'true')
 ?>
 </div>
 
-<?php if (isset($_POST['show_source']) && isset($this->aValidator)) {?>
+<?php if (isset($_REQUEST['show_source']) && isset($this->aValidator)) {?>
 <div id="source" class="validator-output-form">
 <h3><?php echo _AC('source');?></h3>
 <p><?php echo _AC('source_note');?></p>

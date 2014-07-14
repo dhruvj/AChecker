@@ -57,6 +57,9 @@ AChecker.output = AChecker.output || {};
         },
         "AC_report": {
             menuID: "AC_menu_report"
+        },
+        "AC_general_report": {
+            menuID: "AC_menu_general_report"
         }
     };
 

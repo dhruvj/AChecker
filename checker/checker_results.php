@@ -58,7 +58,10 @@ if (isset($aValidator))
 	$num_of_total_a_errors = $aValidator->getNumOfValidateError();
 
 	$errors = $aValidator->getValidationErrorRpt();
-	
+	foreach ($errors as $er) {
+        foreach ($er as $e=>$v) if($e != "html_code") echo " ".$v." ";
+        echo "<br>";
+    }
 	// if it's a LOGIN user validates URI, save into database for user to make decision.
 	// Note that results of validating uploaded files are not saved
 	$user_link_id = '';
@@ -104,10 +107,10 @@ if (isset($aValidator))
 	
 	$_SESSION['input_form']['user_link_id'] = $user_link_id;
 	
-	if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
+	if ($_REQUEST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
 		$a_rpt = new HTMLByGuidelineRpt($errors, $_gids[0], $user_link_id);
 		$_SESSION['input_form']['mode'] = 'guideline';
-	} else if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) {
+	} else if ($_REQUEST["rpt_format"] == REPORT_FORMAT_LINE) {
 		$a_rpt = new HtmlRpt($errors, $user_link_id);
 		$_SESSION['input_form']['mode'] = 'line';
 	}
