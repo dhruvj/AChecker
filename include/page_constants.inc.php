@@ -82,6 +82,9 @@ if (in_array(AC_PRIV_CHECKER, $privs))
 	
 	$_pages['checker/suggestion.php']['parent']    = AC_NAV_PUBLIC;
 	$_pages['checker/suggestion.php']['guide']    = 'AC_HELP_SUGGESTION';
+    
+    $_pages['checker/general_report.php']['title_var'] = 'web_accessibility_checker';
+    $_pages['checker/general_report.php']['parent']    = AC_NAV_PUBLIC;
 }
 
 // 2. user pages

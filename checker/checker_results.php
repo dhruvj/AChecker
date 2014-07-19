@@ -13,7 +13,7 @@
 
 if (!defined("AC_INCLUDE_PATH")) die("Error: AC_INCLUDE_PATH is not defined in checker_input_form.php.");
 
-if (!isset($aValidator) && !isset($htmlValidator)) die(_AC("no_instance"));
+if (!isset($aValidator) && !isset($htmlValidator) && !($generalReport == 1)) die(_AC("no_instance"));
 
 include_once(AC_INCLUDE_PATH. "classes/HTMLRpt.class.php");
 include_once(AC_INCLUDE_PATH. "classes/HTMLByGuidelineRpt.class.php");
@@ -38,7 +38,7 @@ if (isset($cssValidator))
 	$savant->assign('num_of_css_errors', $num_of_css_errors);
 }
 
-if (isset($aValidator))
+if (isset($aValidator) || $generalReport == 1)
 {
 	global $_gids;    // array of the guideline_ids that have been validated against. initialized in checker/index.php
 	// find out selected guidelines
@@ -54,14 +54,30 @@ if (isset($aValidator))
 		}
 	}
 	$guidelines_text = substr($guidelines_text, 0, -2); // remove ending space and ,
+    if($generalReport != 1) {
+        
+        $num_of_total_a_errors = $aValidator->getNumOfValidateError();
 
-	$num_of_total_a_errors = $aValidator->getNumOfValidateError();
+        $errors = $aValidator->getValidationErrorRpt();
+    } else {
+        $finalErrors = array();
+        $checkedErrors = array();
 
-	$errors = $aValidator->getValidationErrorRpt();
-	foreach ($errors as $er) {
-        foreach ($er as $e=>$v) if($e != "html_code") echo " ".$v." ";
-        echo "<br>";
+        foreach ($urls as $url) {
+            $aValidator = new AccessibilityValidator(@file_get_contents($url), $_gids, $uri);
+            $aValidator->validate();
+            $errors = $aValidator->getValidationErrorRpt();
+            foreach ($errors as $e => $v) {
+                if(!in_array($v['check_id'], $checkedErrors)) {
+                    array_push($finalErrors, $v);
+                    array_push($checkedErrors, $v['check_id']);
+                }
+            }
+        }
+        $errors = $finalErrors;
+        $num_of_total_a_errors = count($errors);
     }
+    
 	// if it's a LOGIN user validates URI, save into database for user to make decision.
 	// Note that results of validating uploaded files are not saved
 	$user_link_id = '';

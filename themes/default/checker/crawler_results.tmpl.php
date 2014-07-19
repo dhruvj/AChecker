@@ -51,7 +51,11 @@ $graphForJavascript = rtrim($graphForJavascript, ",");
             }
             echo $gids;
         ?>";
-        return url+gids;
+        // report format
+        var format = "rpt_format=<?php echo $_REQUEST['rpt_format']; ?>&";
+        //bycrawler
+        var byCrawler = "byCrawler=1"
+        return url+gids+format+byCrawler;
     }
     
     function createNode(url, id) {

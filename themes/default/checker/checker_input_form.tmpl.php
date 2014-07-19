@@ -13,17 +13,17 @@
 
 global $onload, $_custom_head;
 
-if (isset($_POST["validate_file"])){
+if (isset($_REQUEST["validate_file"])){
 	$init_tab = "AC_by_upload";
-} else if (isset($_POST["validate_paste"])){
+} else if (isset($_REQUEST["validate_paste"])){
 	$init_tab = "AC_by_paste";
 } else {
 	$init_tab = "AC_by_uri";
 }
 
-if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
+if ($_REQUEST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
 	$rpt_format = "by_guideline";
-} else if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) {
+} else if ($_REQUEST["rpt_format"] == REPORT_FORMAT_LINE) {
 	$rpt_format = "by_line";
 }
 
@@ -79,7 +79,7 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 			// the name of the array for the selected guidelines in the post value are different.
 			// "radio_gids" at guideline view and "checkbox_gids" at line view. 
 			$gid_name = $format."_gid";
-			foreach($_POST[$gid_name] as $gid) {
+			foreach($_REQUEST[$gid_name] as $gid) {
 				if ($gid == $row["guideline_id"]) $output .= ' checked="checked"';
 			} 
 			$output .= ' />'."\n";
@@ -110,16 +110,16 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 
 		<div class="topnavlistcontainer"><br />
 			<ul class="navigation">
-				<li class="navigation"><a href="javascript:void(0)" accesskey="a" title="<?php echo _AC("check_by_uri"); ?> Alt+1" id="AC_menu_by_uri" onclick="return AChecker.input.onClickTab('AC_by_uri');" <?php if (!isset($_POST["validate_paste"]) && !isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_uri"); ?></span></a></li>
-				<li class="navigation"><a href="javascript:void(0)" accesskey="b" title="<?php echo _AC("check_by_upload"); ?> Alt+2" id="AC_menu_by_upload" onclick="return AChecker.input.onClickTab('AC_by_upload');" <?php if (isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_upload"); ?></span></a></li>
-				<li class="navigation"><a href="javascript:void(0)" accesskey="c" title="<?php echo _AC("check_by_paste"); ?> Alt+3" id="AC_menu_by_paste" onclick="return AChecker.input.onClickTab('AC_by_paste');" <?php if (isset($_POST["validate_paste"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_paste"); ?></span></a></li>
+				<li class="navigation"><a href="javascript:void(0)" accesskey="a" title="<?php echo _AC("check_by_uri"); ?> Alt+1" id="AC_menu_by_uri" onclick="return AChecker.input.onClickTab('AC_by_uri');" <?php if (!isset($_REQUEST["validate_paste"]) && !isset($_REQUEST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_uri"); ?></span></a></li>
+				<li class="navigation"><a href="javascript:void(0)" accesskey="b" title="<?php echo _AC("check_by_upload"); ?> Alt+2" id="AC_menu_by_upload" onclick="return AChecker.input.onClickTab('AC_by_upload');" <?php if (isset($_REQUEST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_upload"); ?></span></a></li>
+				<li class="navigation"><a href="javascript:void(0)" accesskey="c" title="<?php echo _AC("check_by_paste"); ?> Alt+3" id="AC_menu_by_paste" onclick="return AChecker.input.onClickTab('AC_by_paste');" <?php if (isset($_REQUEST["validate_paste"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_paste"); ?></span></a></li>
 			</ul>
 		</div>
 		
-		<div id="AC_by_uri" class="input_tab" style="<?php if (!isset($_POST["validate_file"]) && !isset($_POST["validate_paste"])) echo "display:block"; else echo "display:none"; ?>">
+		<div id="AC_by_uri" class="input_tab" style="<?php if (!isset($_REQUEST["validate_file"]) && !isset($_REQUEST["validate_paste"])) echo "display:block"; else echo "display:none"; ?>">
 			<div style="text-align:center;">
 				<label for="checkuri"><?php echo _AC('URL'); ?>:</label>
-				<input type="text" name="uri" id="checkuri" value="<?php if (isset($_POST['uri'])) echo $_POST['uri']; else echo $this->default_uri_value; ?>" size="50"   />
+				<input type="text" name="uri" id="checkuri" value="<?php if (isset($_REQUEST['uri'])) echo $_REQUEST['uri']; else echo $this->default_uri_value; ?>" size="50"   />
 				<div class="validation_submit_div">
 					<div class="spinner_div">
 						<img class="spinner_img" id="AC_spinner_by_uri" style="display:none" src="<?php echo AC_BASE_HREF.'themes/'.$_SESSION['prefs']['PREF_THEME']; ?>/images/spinner.gif" alt="<?php echo _AC("in_progress"); ?>" />
@@ -130,7 +130,7 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 			</div>
 		</div>
 		
-		<div id="AC_by_upload" class="input_tab" style="<?php if (isset($_POST["validate_file"])) echo "display:block"; else echo "display:none"; ?>">
+		<div id="AC_by_upload" class="input_tab" style="<?php if (isset($_REQUEST["validate_file"])) echo "display:block"; else echo "display:none"; ?>">
 			<div style="text-align:center;">
 				<label for="checkfile"><?php echo _AC('file'); ?>:</label>
 				<input type="hidden" name="MAX_FILE_SIZE" value="52428800" />
@@ -146,10 +146,10 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 			</div>
 		</div>
 		
-		<div id="AC_by_paste" class="input_tab" style="<?php if (isset($_POST["validate_paste"])) echo "display:block"; else echo "display:none"; ?>">
+		<div id="AC_by_paste" class="input_tab" style="<?php if (isset($_REQUEST["validate_paste"])) echo "display:block"; else echo "display:none"; ?>">
 			<label for="checkpaste"><?php echo _AC('enter'); ?>:</label>
 			<div style="text-align:center;">
-				<textarea rows="20" cols="75" name="pastehtml" id="checkpaste"><?php if (isset($_POST['pastehtml'])) echo htmlspecialchars($_POST['pastehtml']); ?></textarea>
+				<textarea rows="20" cols="75" name="pastehtml" id="checkpaste"><?php if (isset($_REQUEST['pastehtml'])) echo htmlspecialchars($_REQUEST['pastehtml']); ?></textarea>
 		
 				<div class="validation_submit_div">
 					<div class="spinner_div">
@@ -173,17 +173,17 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 		<table class="data static" style="background-colour:#eeeeee;">
 			<tr>
 				<td class="one_third_width">
-				<input type="checkbox" name="enable_html_validation" id="enable_html_validation" value="1" <?php if (isset($_POST["enable_html_validation"])) echo 'checked="checked"'; ?> />
+				<input type="checkbox" name="enable_html_validation" id="enable_html_validation" value="1" <?php if (isset($_REQUEST["enable_html_validation"])) echo 'checked="checked"'; ?> />
 				<label for='enable_html_validation'><?php echo _AC("enable_html_validator"); ?></label>
 				</td>
 				
 				<td class="one_third_width">
-				<input type="checkbox" name="enable_css_validation" id="enable_css_validation" value="1" <?php if (isset($_POST["enable_css_validation"])) echo 'checked="checked"'; ?> />
+				<input type="checkbox" name="enable_css_validation" id="enable_css_validation" value="1" <?php if (isset($_REQUEST["enable_css_validation"])) echo 'checked="checked"'; ?> />
 				<label for='enable_css_validation'><?php echo _AC("enable_css_validation"); ?></label>
 				</td>
 				
 				<td class="one_third_width">
-				<input type="checkbox" name="show_source" id="show_source" value="1" <?php if (isset($_POST["show_source"])) echo 'checked="checked"'; ?> />
+				<input type="checkbox" name="show_source" id="show_source" value="1" <?php if (isset($_REQUEST["show_source"])) echo 'checked="checked"'; ?> />
 				<label for='show_source'><?php echo _AC("show_source"); ?></label>
 				</td>
 				
@@ -208,8 +208,8 @@ if (is_array($this->rows))
 ?>
 				<td>
 					<input type="checkbox" name="gid[]" id='gid_<?php echo $row["guideline_id"]; ?>' value='<?php echo $row["guideline_id"]; ?>' <?php 
-					if (isset($_POST["gid"]) && is_array($_POST["gid"])) {	
-						foreach($_POST["gid"] as $gid) {
+					if (isset($_REQUEST["gid"]) && is_array($_REQUEST["gid"])) {	
+						foreach($_REQUEST["gid"] as $gid) {
 							if (intval($gid) == $row["guideline_id"]) echo 'checked="checked"';
 						}
 					} 
@@ -239,8 +239,8 @@ echo get_guideline_div($this->rows, $this->num_of_guidelines_per_row, "checkbox"
 				<td colspan="3"><h3><?php echo _AC("report_format"); ?></h3></td>
 			</tr>
 			<tr>
-				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_GUIDELINE; ?>" id="option_rpt_gdl" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) echo 'checked="checked"'; ?> /><label for="option_rpt_gdl"><?php echo _AC("view_by_guideline"); ?></label></td>
-				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_LINE; ?>" id="option_rpt_line" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) echo 'checked="checked"'; ?> /><label for="option_rpt_line"><?php echo _AC("view_by_line"); ?></label></td>
+				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_GUIDELINE; ?>" id="option_rpt_gdl" <?php if ($_REQUEST["rpt_format"] == REPORT_FORMAT_GUIDELINE) echo 'checked="checked"'; ?> /><label for="option_rpt_gdl"><?php echo _AC("view_by_guideline"); ?></label></td>
+				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_LINE; ?>" id="option_rpt_line" <?php if ($_REQUEST["rpt_format"] == REPORT_FORMAT_LINE) echo 'checked="checked"'; ?> /><label for="option_rpt_line"><?php echo _AC("view_by_line"); ?></label></td>
 			</tr>
             <tr>
 				<td colspan="3"><h3><?php echo _AC("advanced_options"); ?></h3></td>
@@ -252,13 +252,13 @@ echo get_guideline_div($this->rows, $this->num_of_guidelines_per_row, "checkbox"
                         <?php 
                             for($count = 0; $count <= $this->number_of_displayed_depth; ++$count) {
                                 if($count == 0) {
-                                    echo "<option value = 'homepage' ".(($_POST["depth_of_review"] == "homepage") ? 'selected': '' )." >"._AC("homepage")."</option>";
+                                    echo "<option value = 'homepage' ".(($_REQUEST["depth_of_review"] == "homepage") ? 'selected': '' )." >"._AC("homepage")."</option>";
                                 } else {
-                                    echo "<option value = '".$count."' ".(($_POST["depth_of_review"] == $count) ? 'selected': '' ).">".$count."</option>";
+                                    echo "<option value = '".$count."' ".(($_REQUEST["depth_of_review"] == $count) ? 'selected': '' ).">".$count."</option>";
                                 }
                             }
                         ?>
-                        <option value='all' <?php echo (($_POST["depth_of_review"] == "all") ? 'selected': '' ) ?> > all </option>
+                        <option value='all' <?php echo (($_REQUEST["depth_of_review"] == "all") ? 'selected': '' ) ?> > all </option>
                     </select>
                 </td>
 				<td class="one_third_width">

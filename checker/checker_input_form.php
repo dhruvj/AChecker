@@ -19,9 +19,9 @@ $default_uri_value = "";
 $num_of_guidelines_per_row = DEFAULT_GUIDELINES_PER_ROW;  // default number of guidelines to display in a row on the page
 $number_of_displayed_depth = DEFAULT_DISPLAYED_DEPTH;  // possible depth values excluding 'all'
 
-if (!isset($_POST["checkbox_gid"])) $_POST["checkbox_gid"] = array(DEFAULT_GUIDELINE);
-if (!isset($_POST["radio_gid"])) $_POST["radio_gid"] = array(DEFAULT_GUIDELINE);
-if (!isset($_POST["rpt_format"])) $_POST["rpt_format"] = REPORT_FORMAT_GUIDELINE;
+if (!isset($_REQUEST["checkbox_gid"])) $_REQUEST["checkbox_gid"] = array(DEFAULT_GUIDELINE);
+if (!isset($_REQUEST["radio_gid"])) $_REQUEST["radio_gid"] = array(DEFAULT_GUIDELINE);
+if (!isset($_REQUEST["rpt_format"])) $_REQUEST["rpt_format"] = REPORT_FORMAT_GUIDELINE;
 
 $guidelinesDAO = new GuidelinesDAO();
 $open_guidelines = $guidelinesDAO->getOpenGuidelines();
