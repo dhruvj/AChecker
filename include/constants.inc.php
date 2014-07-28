@@ -124,6 +124,13 @@ define('DEFAULT_GUIDELINE', 8);
 
 // default numbers in form like number of guidelines per row
 define('DEFAULT_GUIDELINES_PER_ROW', 3);
+
+//default number for crawlers, 0 means infinite or all
+define('DEFAULT_CRAWLER_DEPTH', 0);
+define('DEFAULT_CRAWLER_TOTAL_NUMBER_LINKS', 0);
+define('DEFAULT_CRAWLER_MAXIMUM_LINKS_LEVEL', 0);
+define('DEFAULT_CRAWLER_MAXIMUM_LINKS_PAGE', 0);
+
 define('DEFAULT_DISPLAYED_DEPTH', 3);
 
 // report formats
