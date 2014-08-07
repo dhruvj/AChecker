@@ -33,6 +33,8 @@ include_once(AC_INCLUDE_PATH. 'classes/DAO/UserLinksDAO.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/AccessibilityValidator.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/HTMLWebServiceOutput.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/RESTWebServiceOutput.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/RESTWebServiceOutputCrawler.class.php');
+include_once(AC_INCLUDE_PATH. 'classes/HTMLWebServiceOutputCrawler.class.php');
 include_once(AC_INCLUDE_PATH. 'classes/Crawler.class.php');
 
 $uri = trim(urldecode($_REQUEST['uri']));
@@ -154,7 +156,19 @@ if($enableCrawler == 'true') {
                           );
     
     $graph = $crawler->initiate();
-    //print_r($graph); todo
+    
+    if ($output == 'html') {
+        
+        $htmlWebServiceOutput = new HTMLWebServiceOutputCrawler($uri, $graph, $user_link_id);
+        echo $htmlWebServiceOutput->getWebServiceOutput();
+        
+    } else if($output == 'rest'){
+        
+        $restWebServiceOutputCrawler = new RESTWebServiceOutputCrawler($uri, $graph, $user_link_id);
+        header('Content-type: text/xml');
+        echo $restWebServiceOutputCrawler->getWebServiceOutput();
+        
+    }
     
 } else {
     // validating uri content

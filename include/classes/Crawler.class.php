@@ -45,6 +45,7 @@ class Crawler {
      */
 
     function Crawler($URL, $levelOfReview, $totalLinks, $linksPerLevel, $linksPerPage) {
+        $URL = Utility::getValidURI($URL);
         $extractedURL = parse_url($URL);
         $base = $extractedURL['host'];
         // add www if not present

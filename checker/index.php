@@ -150,7 +150,7 @@ if ($_REQUEST["validate_uri"])
 	
 	if (!$msg->containsErrors())
 	{
-		$_REQUEST['uri'] = $_REQUEST['uri'] = $uri;
+		$_REQUEST['uri'] = $uri;
         if(!$enableCralwer) {  // Don't get any url, we will perform crawling later if $enableCrawler is set
             $validate_content = @file_get_contents($uri);
 
