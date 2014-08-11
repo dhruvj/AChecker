@@ -216,6 +216,9 @@ class Crawler {
         array_push($this->visited, $this->baseURL);    // Mark the base URL visited
         while (!$q->isEmpty()) {
             $node = $q->dequeue();
+            if(count($result[$node["level"]])  >= $this->linksPerLevel && $this->linksPerLevel != 0) {
+                continue;
+            }
             $result[$node["level"]][] = array($node["url"], $node["id"], $node["belongsTo"]);
             $nextLevel = ($node["level"] + 1);    // next level
             //limit the level of review by $this->levelOfReview except 0(infinity)

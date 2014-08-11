@@ -93,7 +93,7 @@ class RESTWebServiceOutputCrawler {
 	* public
 	* $rootURL: root url from which crawler began
 	* $graph: crawler's output
-	* $guideline_array: an array of guideline ids
+	* $userLinkID: user link id
 	*/
 	function RESTWebServiceOutputCrawler($rootURL, $graph, $userLinkID) {
         $this->rootURL = $rootURL;
