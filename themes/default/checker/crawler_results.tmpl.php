@@ -29,6 +29,9 @@ foreach ($this->graph as $level) {
 }
 $graphForJavascript = rtrim($graphForJavascript, ",");
 ?>
+<style>
+    #AC_overview {  width:1000px; overflow-x: scroll;   }
+</style>
 <script src="<?php echo AC_BASE_HREF . "/jscripts/lib/jquery.jOrgChart.js" ?>" type="text/javascript"></script>
 <link rel="stylesheet" href="<?php echo AC_BASE_HREF ?>themes/default/jquery.jOrgChart.css"/>
 <script language="javascript" type="text/javascript"> 
